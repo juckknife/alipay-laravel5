@@ -262,12 +262,9 @@ class AlipayTradeService
         $request->setBizContent($biz_content);
 
         $response = $this->aopclientRequestExecute($request); 
-        dd($request);
-        $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
-        dd($responseNode);
-        $resultCode = $response->$responseNode->code;
+        $response = $response->alipay_fund_coupon_order_agreement_pay_response;
         
-        return $resultCode;
+        return $response;
     }
 
     /**
@@ -284,9 +281,9 @@ class AlipayTradeService
         $request->setBizContent($biz_content);
 
         $response = $this->aopclientRequestExecute($request); 
-        dd($response);
+        $response = $response->alipay_open_auth_token_app_response;
         
-        return $resultCode;
+        return $response;
     }
 
     /**
@@ -303,9 +300,8 @@ class AlipayTradeService
         $request->setBizContent($biz_content);
 
         $response = $this->aopclientRequestExecute($request); 
-        dd($response);
-        
-        return $resultCode;
+        $response = $response->alipay_open_auth_token_app_query_response;
+        return $response;
     }
 }
 
