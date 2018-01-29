@@ -7,14 +7,14 @@
 首先安装 [Composer](http://getcomposer.org/). 已安装请忽略。
 在 `composer.json` 文件中添加:
 
-    "echobool/alipay-laravel5": "dev-master"
+    "juckknife/alipay-laravel5": "dev-master"
 
 然后执行composer进行安装:
 
     $ composer update -vvv
 或直接：
 
-    $ composer require "echobool/alipay-laravel5:dev-master"
+    $ composer require "juckknife/alipay-laravel5:dev-master"
 在app.php中加上
 
     EchoBool\AlipayLaravel\AlipayServiceProvider::class,
