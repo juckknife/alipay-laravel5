@@ -13,6 +13,9 @@ use EchoBool\AlipayLaravel\BuilderModel\AlipayTradeFastpayRefundQueryContentBuil
 use EchoBool\AlipayLaravel\BuilderModel\AlipayTradePagePayContentBuilder;
 use EchoBool\AlipayLaravel\BuilderModel\AlipayTradeQueryContentBuilder;
 use EchoBool\AlipayLaravel\BuilderModel\AlipayTradeRefundContentBuilder;
+use EchoBool\AlipayLaravel\BuilderModel\AlipayFundCouponOrderAgreementPayContentBuilder;
+use EchoBool\AlipayLaravel\BuilderModel\AlipayOpenAuthTokenAppBuilder;
+use EchoBool\AlipayLaravel\BuilderModel\AlipayOpenAuthTokenAppQueryBuilder;
 use EchoBool\AlipayLaravel\Service\AlipayTradeService;
 
 class AlipaySdk
@@ -129,5 +132,64 @@ class AlipaySdk
     {
         $this->aop->writeLog(var_export($requestData,true));
         return $this->aop->check($requestData);
+    }
+
+    /**
+     * 打钱接口 
+     * @param $out_order_no
+     * @param $out_request_no
+     * @param $order_title
+     * @param $amount
+     * @param $payee_logon_id 收款方的支付宝登录号，形式为手机号或邮箱等
+     * @param $pay_timeout 该笔订单允许的最晚付款时间，逾期将关闭该笔订单
+     * @param $customData 自定义数据
+     * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
+     */
+    public function fightMoneyPay($out_order_no, $out_request_no, $order_title = '工资', $amount, $payer_user_id, $pay_timeout='7d')
+    {
+        $RequestBuilder = new AlipayFundCouponOrderAgreementPayContentBuilder();
+        $RequestBuilder->setOutOrderNo($out_order_no);
+        $RequestBuilder->setOutRequestNo($out_request_no);
+        $RequestBuilder->setOrderTitle($order_title);
+        $RequestBuilder->setAmount($amount);
+        $RequestBuilder->setPayeeUserId($payer_user_id);
+        $RequestBuilder->setPayTimeout($pay_timeout);
+        $response = $this->aop->fightMoney($RequestBuilder); 
+
+        return $response;
+    }
+
+    /**
+     * 换取应用授权令牌
+     * @param $grant_type
+     * @param $code
+     * @param $refresh_token
+     * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
+     */
+    public function getAuthToken($grant_type, $code, $refresh_token)
+    {
+        $RequestBuilder = new AlipayOpenAuthTokenAppBuilder();
+        $RequestBuilder->setGrantType($grant_type);
+        $RequestBuilder->setCode($code);
+        $RequestBuilder->setRefreshToken($refresh_token);
+        $response = $this->aop->authToken($RequestBuilder);
+
+        return $response;
+    }
+
+    /**
+     * 查询某个应用授权AppAuthToken的授权信息
+     * @param $grant_type
+     * @param $code
+     * @param $refresh_token
+     * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
+     */
+    public function authTokenQuery($app_auth_token)
+    {
+        $RequestBuilder = new AlipayOpenAuthTokenAppQueryBuilder();
+        $RequestBuilder->setAppAuthToken($app_auth_token);
+        $response = $this->aop->authTokenQuery($RequestBuilder);
+
+        return $response;
     }
 }
