@@ -19,6 +19,10 @@ class AlipayFundCouponOrderAgreementPayContentBuilder
 
     private $pay_timeout;
 
+    private $deduct_auth_no;
+
+    private $payee_logon_id;
+
     private $bizContentarr = array();
 
     private $bizContent = NULL;
@@ -29,6 +33,28 @@ class AlipayFundCouponOrderAgreementPayContentBuilder
             $this->bizContent = json_encode($this->bizContentarr,JSON_UNESCAPED_UNICODE);
         }
         return $this->bizContent;
+    }
+
+    public function getDeductAuthNo()
+    {
+        return $this->deduct_auth_no;
+    }
+
+    public function setDeductAuthNo($deduct_auth_no)
+    {
+        $this->deduct_auth_no = $deduct_auth_no;
+        $this->bizContentarr['deduct_auth_no'] = $deduct_auth_no;
+    }
+
+    public function getPayeeLoginId()
+    {
+        return $this->payee_logon_id;
+    }
+
+    public function setPayeeLoginId($payee_logon_id)
+    {
+        $this->payee_logon_id = $payee_logon_id;
+        $this->bizContentarr['payee_logon_id'] = $payee_logon_id;
     }
 
     public function getPayTimeout()

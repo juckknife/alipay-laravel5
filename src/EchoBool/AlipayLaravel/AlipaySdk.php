@@ -145,14 +145,16 @@ class AlipaySdk
      * @param $customData 自定义数据
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function fightMoneyPay($out_order_no, $out_request_no, $order_title = '工资', $amount, $payer_user_id, $pay_timeout='7d')
+    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $payee_user_id, $deduct_auth_no, $pay_timeout='7d', $order_title = '工资')
     {
         $RequestBuilder = new AlipayFundCouponOrderAgreementPayContentBuilder();
         $RequestBuilder->setOutOrderNo($out_order_no);
         $RequestBuilder->setOutRequestNo($out_request_no);
         $RequestBuilder->setOrderTitle($order_title);
         $RequestBuilder->setAmount($amount);
-        $RequestBuilder->setPayeeUserId($payer_user_id);
+        $RequestBuilder->setPayeeUserId($payee_user_id);
+        $RequestBuilder->setPayeeLoginId($payee_logon_id);
+        $RequestBuilder->setDeductAuthNo($deduct_auth_no);
         $RequestBuilder->setPayTimeout($pay_timeout);
         $response = $this->aop->fightMoney($RequestBuilder); 
 
