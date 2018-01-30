@@ -17,6 +17,9 @@ use EchoBool\AlipayLaravel\Request\AlipayTradeFastpayRefundQueryRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradePagePayRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradeQueryRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradeRefundRequest;
+use EchoBool\AlipayLaravel\Request\AlipayFundCouponOrderAgreementPayRequest;
+use EchoBool\AlipayLaravel\Request\AlipayOpenAuthTokenAppRequest;
+use EchoBool\AlipayLaravel\Request\AlipayOpenAuthTokenAppQueryRequest;
 
 class AlipayTradeService
 {
@@ -243,6 +246,62 @@ class AlipayTradeService
     function writeLog($text)
     {
         \Illuminate\Support\Facades\Log::info($text);
+    }
+
+    /**
+     * 打钱
+     * @param $builder 业务参数，使用buildmodel中的对象生成。
+     * @return $response 支付宝返回的信息
+     */
+    function fightMoney($builder)
+    {
+        $biz_content = $builder->getBizContent();
+        //打印业务参数
+        $this->writeLog($biz_content);
+        $request = new AlipayFundCouponOrderAgreementPayRequest();
+        $request->setBizContent($biz_content);
+
+        $response = $this->aopclientRequestExecute($request); 
+        $response = $response->alipay_fund_coupon_order_agreement_pay_response;
+        
+        return $response;
+    }
+
+    /**
+     * 换token授权码
+     * @param $builder 业务参数，使用buildmodel中的对象生成。
+     * @return $response 支付宝返回的信息
+     */
+    function authToken($builder)
+    {
+        $biz_content = $builder->getBizContent();
+        //打印业务参数
+        $this->writeLog($biz_content);
+        $request = new AlipayOpenAuthTokenAppRequest();
+        $request->setBizContent($biz_content);
+
+        $response = $this->aopclientRequestExecute($request); 
+        $response = $response->alipay_open_auth_token_app_response;
+        
+        return $response;
+    }
+
+    /**
+     * 查询某个应用授权AppAuthToken的授权信息
+     * @param $builder 业务参数，使用buildmodel中的对象生成。
+     * @return $response 支付宝返回的信息
+     */
+    function authTokenQuery($builder)
+    {
+        $biz_content = $builder->getBizContent();
+        //打印业务参数
+        $this->writeLog($biz_content);
+        $request = new AlipayOpenAuthTokenAppQueryRequest();
+        $request->setBizContent($biz_content);
+
+        $response = $this->aopclientRequestExecute($request); 
+        $response = $response->alipay_open_auth_token_app_query_response;
+        return $response;
     }
 }
 
