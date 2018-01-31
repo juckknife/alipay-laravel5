@@ -13,9 +13,11 @@ use EchoBool\AlipayLaravel\BuilderModel\AlipayTradeFastpayRefundQueryContentBuil
 use EchoBool\AlipayLaravel\BuilderModel\AlipayTradePagePayContentBuilder;
 use EchoBool\AlipayLaravel\BuilderModel\AlipayTradeQueryContentBuilder;
 use EchoBool\AlipayLaravel\BuilderModel\AlipayTradeRefundContentBuilder;
-use EchoBool\AlipayLaravel\BuilderModel\AlipayFundCouponOrderAgreementPayContentBuilder;
+use EchoBool\AlipayLaravel\BuilderModel\AlipayFundCouponOrderDisburseBuilder;
 use EchoBool\AlipayLaravel\BuilderModel\AlipayOpenAuthTokenAppBuilder;
 use EchoBool\AlipayLaravel\BuilderModel\AlipayOpenAuthTokenAppQueryBuilder;
+use EchoBool\AlipayLaravel\BuilderModel\AlipayFundCouponOperationQueryBuilder;
+use EchoBool\AlipayLaravel\BuilderModel\AlipayFundCouponOrderAgreementPayBuilder;
 use EchoBool\AlipayLaravel\Service\AlipayTradeService;
 
 class AlipaySdk
@@ -145,18 +147,42 @@ class AlipaySdk
      * @param $customData 自定义数据
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $payee_user_id, $deduct_auth_no, $pay_timeout='7d', $order_title = '工资')
+    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $payee_user_id, $deduct_auth_no, $pay_timeout='1m', $order_title = '工资')
     {
-        $RequestBuilder = new AlipayFundCouponOrderAgreementPayContentBuilder();
+        $RequestBuilder = new AlipayFundCouponOrderDisburseBuilder();
+        $RequestBuilder->setOutOrderNo($out_order_no);
+        $RequestBuilder->setDeductAuthNo($deduct_auth_no);
+        $RequestBuilder->setOutRequestNo($out_request_no);
+        $RequestBuilder->setOrderTitle($order_title);
+        $RequestBuilder->setAmount($amount);
+        // $RequestBuilder->setPayeeUserId($payee_user_id);
+        $RequestBuilder->setPayeeLoginId($payee_logon_id);
+        // $RequestBuilder->setPayTimeout($pay_timeout);
+        $response = $this->aop->fightMoney($RequestBuilder); 
+
+        return $response;
+    }
+
+    /**
+     * 生成红包 
+     * @param $out_order_no
+     * @param $order_title
+     * @param $amount
+     * @param $payer_user_id 
+     * @param $pay_timeout 该笔订单允许的最晚付款时间，逾期将关闭该笔订单
+     * @param $customData 自定义数据
+     * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
+     */
+    public function createPocket($out_order_no, $out_request_no, $amount, $payer_user_id, $pay_timeout='1m', $order_title = '工资')
+    {
+        $RequestBuilder = new AlipayFundCouponOrderAgreementPayBuilder();
         $RequestBuilder->setOutOrderNo($out_order_no);
         $RequestBuilder->setOutRequestNo($out_request_no);
         $RequestBuilder->setOrderTitle($order_title);
         $RequestBuilder->setAmount($amount);
-        $RequestBuilder->setPayeeUserId($payee_user_id);
-        $RequestBuilder->setPayeeLoginId($payee_logon_id);
-        $RequestBuilder->setDeductAuthNo($deduct_auth_no);
-        $RequestBuilder->setPayTimeout($pay_timeout);
-        $response = $this->aop->fightMoney($RequestBuilder); 
+        $RequestBuilder->setPayerUserId($payer_user_id);
+        // $RequestBuilder->setPayTimeout($pay_timeout);
+        $response = $this->aop->createPocket($RequestBuilder); 
 
         return $response;
     }
@@ -191,6 +217,26 @@ class AlipaySdk
         $RequestBuilder = new AlipayOpenAuthTokenAppQueryBuilder();
         $RequestBuilder->setAppAuthToken($app_auth_token);
         $response = $this->aop->authTokenQuery($RequestBuilder);
+
+        return $response;
+    }
+
+    /**
+     * 红包明细查询接口
+     * @param $auth_no
+     * @param $out_order_no
+     * @param $operation_id
+     * @param $out_request_no
+     * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
+     */
+    public function fundCouponQuery($auth_no, $out_order_no, $operation_id, $out_request_no)
+    {
+        $RequestBuilder = new AlipayFundCouponOperationQueryBuilder();
+        $RequestBuilder->setAuthNo($auth_no);
+        $RequestBuilder->setOutOrderNo($out_order_no);
+        $RequestBuilder->setOperationId($operation_id);
+        $RequestBuilder->setOutRequestNo($out_request_no);
+        $response = $this->aop->fundCouponQuery($RequestBuilder);
 
         return $response;
     }
