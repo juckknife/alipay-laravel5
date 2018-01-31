@@ -147,7 +147,7 @@ class AlipaySdk
      * @param $customData 自定义数据
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $payee_user_id, $deduct_auth_no, $pay_timeout='1m', $order_title = '工资')
+    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $deduct_auth_no, $pay_timeout='1m', $order_title = '工资', $payee_user_id = '')
     {
         $RequestBuilder = new AlipayFundCouponOrderDisburseBuilder();
         $RequestBuilder->setOutOrderNo($out_order_no);
@@ -173,7 +173,7 @@ class AlipaySdk
      * @param $customData 自定义数据
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function createPocket($out_order_no, $out_request_no, $amount, $payer_user_id, $pay_timeout='1m', $order_title = '工资')
+    public function createPocket($out_order_no, $out_request_no, $amount, $payer_user_id, $order_title = '红包', $pay_timeout='1m')
     {
         $RequestBuilder = new AlipayFundCouponOrderAgreementPayBuilder();
         $RequestBuilder->setOutOrderNo($out_order_no);
