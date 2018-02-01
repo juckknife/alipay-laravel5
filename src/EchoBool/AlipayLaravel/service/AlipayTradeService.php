@@ -17,9 +17,11 @@ use EchoBool\AlipayLaravel\Request\AlipayTradeFastpayRefundQueryRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradePagePayRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradeQueryRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradeRefundRequest;
-use EchoBool\AlipayLaravel\Request\AlipayFundCouponOrderAgreementPayRequest;
+use EchoBool\AlipayLaravel\Request\AlipayFundCouponOrderDisburseRequest;
 use EchoBool\AlipayLaravel\Request\AlipayOpenAuthTokenAppRequest;
 use EchoBool\AlipayLaravel\Request\AlipayOpenAuthTokenAppQueryRequest;
+use EchoBool\AlipayLaravel\Request\AlipayFundCouponOperationQueryRequest;
+use EchoBool\AlipayLaravel\Request\AlipayFundCouponOrderAgreementPayRequest;
 
 class AlipayTradeService
 {
@@ -106,7 +108,7 @@ class AlipayTradeService
      * @param $ispage  是否是页面接口，电脑网站支付是页面表单接口。
      * @return $response 支付宝返回的信息
      */
-    function aopclientRequestExecute($request, $action = '', $ispage = false)
+    function aopclientRequestExecute($request, $action = '', $ispage = false, $app_auth_token = null)
     {
         $aop = new AopClient ();
         $aop->gatewayUrl = $this->gateway_url;
@@ -126,7 +128,7 @@ class AlipayTradeService
             if ($action == 'tradePay') {
                 $result = $aop->smtExecute($request);
             } else {
-                $result = $aop->execute($request);
+                $result = $aop->execute($request, $authToken = null, $app_auth_token);
             }
 
         }
@@ -253,7 +255,27 @@ class AlipayTradeService
      * @param $builder 业务参数，使用buildmodel中的对象生成。
      * @return $response 支付宝返回的信息
      */
-    function fightMoney($builder)
+    function fightMoney($builder, $app_auth_token = null)
+    {
+        $biz_content = $builder->getBizContent();
+        //打印业务参数
+        $this->writeLog($biz_content);
+        $request = new AlipayFundCouponOrderDisburseRequest();
+        $request->setBizContent($biz_content);
+
+        $response = $this->aopclientRequestExecute($request, $action = '', $ispage = false, $app_auth_token); 
+
+        $response = $response->alipay_fund_coupon_order_disburse_response;
+        
+        return $response;
+    }
+
+     /**
+     * 创建红包
+     * @param $builder 业务参数，使用buildmodel中的对象生成。
+     * @return $response 支付宝返回的信息
+     */
+    function createPocket($builder, $app_auth_token = null)
     {
         $biz_content = $builder->getBizContent();
         //打印业务参数
@@ -261,7 +283,8 @@ class AlipayTradeService
         $request = new AlipayFundCouponOrderAgreementPayRequest();
         $request->setBizContent($biz_content);
 
-        $response = $this->aopclientRequestExecute($request); 
+        $response = $this->aopclientRequestExecute($request, $action = '', $ispage = false, $app_auth_token); 
+
         $response = $response->alipay_fund_coupon_order_agreement_pay_response;
         
         return $response;
@@ -301,6 +324,24 @@ class AlipayTradeService
 
         $response = $this->aopclientRequestExecute($request); 
         $response = $response->alipay_open_auth_token_app_query_response;
+        return $response;
+    }
+
+    /**
+     * 通过该接口可以查询单笔明细的详细信息
+     * @param $builder 业务参数，使用buildmodel中的对象生成。
+     * @return $response 支付宝返回的信息
+     */
+    function fundCouponQuery($builder, $app_auth_token = null){
+
+        $biz_content = $builder->getBizContent();
+        //打印业务参数
+        $this->writeLog($biz_content);
+        $request = new AlipayFundCouponOperationQueryRequest();
+        $request->setBizContent($biz_content);
+
+        $response = $this->aopclientRequestExecute($request, $action = '', $ispage = false, $app_auth_token); 
+        $response = $response->alipay_fund_coupon_operation_query_response;
         return $response;
     }
 }

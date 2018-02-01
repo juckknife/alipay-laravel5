@@ -10,7 +10,7 @@ class AlipayOpenAuthTokenAppBuilder
 
     private $code;
 
-    private $operatorId;
+    private $refresh_token;
 
     private $bizContentarr = array();
 
@@ -53,7 +53,7 @@ class AlipayOpenAuthTokenAppBuilder
     public function setRefreshToken($refresh_token)
     {
     	$this->refresh_token = $refresh_token;
-    	$this->bizContentarr['operator_id'] = $refresh_token;
+    	$this->bizContentarr['refresh_token'] = $refresh_token;
     }
 
 }
