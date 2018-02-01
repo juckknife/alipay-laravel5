@@ -147,7 +147,7 @@ class AlipaySdk
      * @param $customData 自定义数据
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $deduct_auth_no, $pay_timeout='1m', $order_title = '工资', $payee_user_id = '')
+    public function fightMoneyPay($out_order_no, $out_request_no, $amount, $payee_logon_id, $deduct_auth_no, $app_auth_token = null, $pay_timeout='1m', $order_title = '工资', $payee_user_id = '')
     {
         $RequestBuilder = new AlipayFundCouponOrderDisburseBuilder();
         $RequestBuilder->setOutOrderNo($out_order_no);
@@ -158,7 +158,7 @@ class AlipaySdk
         // $RequestBuilder->setPayeeUserId($payee_user_id);
         $RequestBuilder->setPayeeLoginId($payee_logon_id);
         // $RequestBuilder->setPayTimeout($pay_timeout);
-        $response = $this->aop->fightMoney($RequestBuilder); 
+        $response = $this->aop->fightMoney($RequestBuilder, $app_auth_token); 
 
         return $response;
     }
@@ -173,7 +173,7 @@ class AlipaySdk
      * @param $customData 自定义数据
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function createPocket($out_order_no, $out_request_no, $amount, $payer_user_id, $order_title = '红包', $pay_timeout='1m')
+    public function createPocket($out_order_no, $out_request_no, $amount, $payer_user_id, $order_title = '红包', $app_auth_token = null, $pay_timeout='1m')
     {
         $RequestBuilder = new AlipayFundCouponOrderAgreementPayBuilder();
         $RequestBuilder->setOutOrderNo($out_order_no);
@@ -182,7 +182,7 @@ class AlipaySdk
         $RequestBuilder->setAmount($amount);
         $RequestBuilder->setPayerUserId($payer_user_id);
         // $RequestBuilder->setPayTimeout($pay_timeout);
-        $response = $this->aop->createPocket($RequestBuilder); 
+        $response = $this->aop->createPocket($RequestBuilder, $app_auth_token); 
 
         return $response;
     }
@@ -229,14 +229,14 @@ class AlipaySdk
      * @param $out_request_no
      * @return bool|提交表单HTML文本|mixed|\SimpleXMLElement|string
      */
-    public function fundCouponQuery($auth_no, $out_order_no, $operation_id, $out_request_no)
+    public function fundCouponQuery($auth_no, $out_order_no, $operation_id, $out_request_no, $app_auth_token = null)
     {
         $RequestBuilder = new AlipayFundCouponOperationQueryBuilder();
         $RequestBuilder->setAuthNo($auth_no);
         $RequestBuilder->setOutOrderNo($out_order_no);
         $RequestBuilder->setOperationId($operation_id);
         $RequestBuilder->setOutRequestNo($out_request_no);
-        $response = $this->aop->fundCouponQuery($RequestBuilder);
+        $response = $this->aop->fundCouponQuery($RequestBuilder, $app_auth_token);
 
         return $response;
     }
