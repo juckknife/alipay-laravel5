@@ -12,6 +12,7 @@ namespace EchoBool\AlipayLaravel\Service;
 
 use EchoBool\AlipayLaravel\AopClient;
 use EchoBool\AlipayLaravel\Request\AlipayDataDataserviceBillDownloadurlQueryRequest;
+use EchoBool\AlipayLaravel\Request\AlipayFundCouponOrderRefundRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradeCloseRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradeFastpayRefundQueryRequest;
 use EchoBool\AlipayLaravel\Request\AlipayTradePagePayRequest;
@@ -344,6 +345,23 @@ class AlipayTradeService
         $response = $response->alipay_fund_coupon_operation_query_response;
         return $response;
     }
+
+
+    function refundCoupon($builder, $app_auth_token = null)
+    {
+        $biz_content = $builder->getBizContent();
+        //打印业务参数
+        $this->writeLog($biz_content);
+        $request = new AlipayFundCouponOrderRefundRequest();
+        $request->setBizContent($biz_content);
+
+        $response = $this->aopclientRequestExecute($request, $action = '', $ispage = false, $app_auth_token);
+
+        $response = $response->alipay_fund_coupon_order_agreement_pay_response;
+
+        return $response;
+    }
+
 }
 
 ?>

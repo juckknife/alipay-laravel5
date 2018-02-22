@@ -5,7 +5,7 @@
 
 namespace EchoBool\AlipayLaravel\BuilderModel;
 
-class AlipayFundCouponOrderDisburseBuilder
+class AlipayFundCouponOrderDisburse
 {
     private $out_order_no;
 
