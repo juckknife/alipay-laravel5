@@ -357,7 +357,7 @@ class AlipayTradeService
 
         $response = $this->aopclientRequestExecute($request, $action = '', $ispage = false, $app_auth_token);
 
-        $response = $response->alipay_fund_coupon_order_agreement_pay_response;
+        $response = $response->alipay_fund_coupon_order_refund_response;
 
         return $response;
     }
